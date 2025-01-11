@@ -12,7 +12,7 @@ pub fn ArrList(comptime T: type) type {
 
         const Self = @This();
 
-        fn initWithCap(cap: usize, allocator: std.mem.Allocator) Self {
+        pub fn initWithCap(cap: usize, allocator: std.mem.Allocator) Self {
             return Self{
                 .allocator = allocator,
                 .data = allocator.alloc(T, cap) catch unreachable,
@@ -21,35 +21,35 @@ pub fn ArrList(comptime T: type) type {
             };
         }
 
-        fn init(allocator: std.mem.Allocator) Self {
+        pub fn init(allocator: std.mem.Allocator) Self {
             return initWithCap(INIT_ARR_CAP, allocator);
         }
 
-        fn deinit(self: Self) void {
+        pub fn deinit(self: Self) void {
             self.allocator.free(self.data);
         }
 
-        fn push(self: *Self, item: T) void {
+        pub fn push(self: *Self, item: T) void {
             if (self.size >= self.cap)
                 self.changeCap(self.cap * 2);
             self.data[self.size] = item;
             self.size += 1;
         }
 
-        fn get(self: Self, idx: usize) ?*T {
+        pub fn get(self: Self, idx: usize) ?*T {
             if (self.size <= idx) return null;
 
             return &self.data[idx];
         }
 
-        fn pop(self: *Self) ?T {
+        pub fn pop(self: *Self) ?T {
             if (self.size == 0) return null;
 
             self.size -= 1;
             return self.data[self.size];
         }
 
-        fn remove(self: *Self, idx: usize) ?T {
+        pub fn remove(self: *Self, idx: usize) ?T {
             if (self.size <= idx) return null;
             if (idx == self.size - 1) return self.pop();
 
@@ -60,7 +60,7 @@ pub fn ArrList(comptime T: type) type {
             return val;
         }
 
-        fn resize(self: *Self, new_size: usize) void {
+        pub fn resize(self: *Self, new_size: usize) void {
             if (new_size >= self.cap)
                 self.changeCap(new_size * 2);
 
